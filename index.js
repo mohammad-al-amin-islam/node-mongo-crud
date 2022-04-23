@@ -44,7 +44,29 @@ async function run() {
             res.send(result);
         });
 
+        //load single data from db
+        app.get('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await userCollection.findOne(query);
+            res.send(result);
+        })
 
+        //upate a data
+        app.put('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const body = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: body.name,
+                    email: body.email
+                },
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
 
         //delete data from db
         app.delete('/user/:id', async (req, res) => {
